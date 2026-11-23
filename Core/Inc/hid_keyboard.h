@@ -116,6 +116,18 @@
 #define KEY_KEYPAD_DOT          0x63
 #define KEY_NON_US_2            0x64
 #define KEY_APPLICATION         0x65
+#define KEY_F13                 0x68
+#define KEY_F14                 0x69
+#define KEY_F15                 0x6A
+#define KEY_F16                 0x6B
+#define KEY_F17                 0x6C
+#define KEY_F18                 0x6D
+#define KEY_F19                 0x6E
+#define KEY_F20                 0x6F
+#define KEY_F21                 0x70
+#define KEY_F22                 0x71
+#define KEY_F23                 0x72
+#define KEY_F24                 0x73
 
 USBD_StatusTypeDef hid_keyboard_button(uint16_t key, uint8_t mode);
 USBD_StatusTypeDef hid_keyboard_release_all(void);

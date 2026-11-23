@@ -310,6 +310,7 @@ int main(void)
     matrix_task();
     non_matrix_task();
     trackball_task();
+    keymaps_task();
     hid_gamepad_task();
     hid_vendor_task();
 

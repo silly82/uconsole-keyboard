@@ -8,6 +8,7 @@
 #include "trackball.h"
 #include "main.h"
 #include "stm32f1xx_hal.h"
+#include "config.h"
 
 KEYBOARD_STATE keyboard_state;
 
@@ -16,6 +17,44 @@ static uint16_t matrix_maps[LAYERS_NUM * 2][MATRIX_KEYS] = {0};
 static uint16_t keys_maps[LAYERS_NUM * 2][NON_MATRIX_KEYS] = {0};
 static uint16_t matrix_pick_map[MATRIX_KEYS] = {0};
 static uint16_t non_matrix_pick_map[NON_MATRIX_KEYS] = {0};
+
+/* Mouse wheel via buttons (SK_WHEEL_UP / SK_WHEEL_DOWN) with auto-repeat */
+#define WHEEL_REPEAT_DELAY_MS    300
+#define WHEEL_REPEAT_INTERVAL_MS 50
+static int8_t   wheel_hold_dir = 0;   /* +1 up, -1 down, 0 none */
+static int8_t   wheel_pending = 0;    /* ticks not yet sent */
+static uint32_t wheel_next_time = 0;
+
+static void wheel_key(int8_t dir, uint8_t mode)
+{
+    if (mode == KEY_PRESSED) {
+        wheel_hold_dir = dir;
+        wheel_pending += dir;
+        wheel_next_time = HAL_GetTick() + WHEEL_REPEAT_DELAY_MS;
+    } else if (wheel_hold_dir == dir) {
+        wheel_hold_dir = 0;
+    }
+}
+
+void keymaps_task(void)
+{
+    uint32_t now = HAL_GetTick();
+    if (wheel_hold_dir != 0 && (int32_t)(now - wheel_next_time) >= 0) {
+        if (wheel_pending > -100 && wheel_pending < 100) {
+            wheel_pending += wheel_hold_dir;
+        }
+        wheel_next_time = now + WHEEL_REPEAT_INTERVAL_MS;
+    }
+    if (wheel_pending != 0) {
+        int8_t w = wheel_pending;
+#if VERTICAL_SCROLL_INVERTED
+        w = -w;
+#endif
+        if (hid_mouse_move(0, 0, w, 0) == USBD_OK) {
+            wheel_pending = 0;
+        }
+    }
+}
 
 static void do_the_key(uint16_t k, uint8_t mode)
 {
@@ -46,6 +85,14 @@ static void do_the_key(uint16_t k, uint8_t mode)
                 fn_lock_set(!keyboard_state.fn_lock);
                 hid_vendor_schedule_send();
             }
+            break;
+
+        case SK_WHEEL_UP:
+            wheel_key(1, mode);
+            break;
+
+        case SK_WHEEL_DOWN:
+            wheel_key(-1, mode);
             break;
 
         case SK_KEYBOARD_LIGHT:

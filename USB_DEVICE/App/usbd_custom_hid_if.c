@@ -118,10 +118,10 @@ __ALIGN_BEGIN static uint8_t CUSTOM_HID_ReportDesc_FS[USBD_CUSTOM_HID_REPORT_DES
   0x95, 0x06,        //   Report Count (6)
   0x75, 0x08,        //   Report Size (8)
   0x15, 0x00,        //   Logical Minimum (0)
-  0x25, 0x65,        //   Logical Maximum (101)
+  0x25, 0x73,        //   Logical Maximum (115, incl. F13-F24)
   0x05, 0x07,        //   Usage Page (Kbrd/Keypad)
   0x19, 0x00,        //   Usage Minimum (0x00)
-  0x29, 0x65,        //   Usage Maximum (0x65)
+  0x29, 0x73,        //   Usage Maximum (0x73)
   0x81, 0x00,        //   Input (Data,Array,Abs,No Wrap,Linear,Preferred State,No Null Position)
   0xC0,              // End Collection
 

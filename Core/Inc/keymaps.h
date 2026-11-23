@@ -11,8 +11,12 @@
 enum SKEYS {
   SK_FN_KEY = SPECIAL_KEY_FLAG,
   SK_KEYBOARD_LOCK,
-  SK_KEYBOARD_LIGHT
+  SK_KEYBOARD_LIGHT,
+  SK_WHEEL_UP,
+  SK_WHEEL_DOWN
 };
+
+void keymaps_task(void);
 
 #define KEY_NONE                0xFFFF
 
